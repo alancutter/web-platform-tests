@@ -19,7 +19,7 @@ test(function(t) {
 
   assert_equals(getComputedStyle(div).fontStyle, 'normal',
                 'Animation produces \'from\' value at start of interval');
-  anim.currentTime = anim.effect.getComputedTiming().duration / 2 - 1;
+  anim.currentTime = 499;
   assert_equals(getComputedStyle(div).fontStyle, 'normal',
                 'Animation produces \'from\' value just before the middle of'
                 + ' the interval');
@@ -41,7 +41,7 @@ test(function(t) {
 
   assert_equals(getComputedStyle(div).height, originalHeight,
                 'Animation produces \'from\' value at start of interval');
-  anim.currentTime = anim.effect.getComputedTiming().duration / 2 - 1;
+  anim.currentTime = 499;
   assert_equals(getComputedStyle(div).height, originalHeight,
                 'Animation produces \'from\' value just before the middle of'
                 + ' the interval');
