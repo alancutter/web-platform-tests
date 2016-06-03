@@ -15,7 +15,7 @@ promise_test(function(t) {
   var div = createDiv(t);
   var animation = div.animate({transform: ['none', 'translate(100px)']},
                               100 * MS_PER_SEC);
-  return animation.ready.then(function() {
+  return waitForAnimationFrames(1).then(function() {
     assert_not_equals(getComputedStyle(div).transform, 'none',
                       'transform style is animated before cancelling');
     animation.cancel();
@@ -28,7 +28,6 @@ test(function(t) {
   var div = createDiv(t);
   var animation = div.animate({marginLeft: ['0px', '100px']},
                               100 * MS_PER_SEC);
-  animation.effect.timing.easing = 'linear';
   animation.cancel();
   assert_equals(getComputedStyle(div).marginLeft, '0px',
                 'margin-left style is not animated after cancelling');
@@ -43,14 +42,14 @@ promise_test(function(t) {
   var div = createDiv(t);
   var animation = div.animate({marginLeft:['100px', '200px']},
                               100 * MS_PER_SEC);
-  return animation.ready.then(function() {
+  return waitForAnimationFrames(1).then(function() {
     animation.cancel();
     assert_equals(getComputedStyle(div).marginLeft, '0px',
                   'margin-left style is not animated after cancelling');
     animation.play();
     assert_equals(getComputedStyle(div).marginLeft, '100px',
                   'margin-left style is animated after re-starting animation');
-    return animation.ready;
+    return waitForAnimationFrames(2);
   }).then(function() {
     assert_equals(animation.playState, 'running',
                   'Animation succeeds in running after being re-started');
