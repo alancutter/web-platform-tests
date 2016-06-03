@@ -10,14 +10,14 @@
 <script>
 'use strict';
 
-async_test(function(t) {
+test(function(t) {
   var div = createDiv(t);
-  var anim = div.animate({ opacity: [ 0, 1 ] }, { delay: 1 });
-  assert_equals(anim.effect.getComputedTiming().progress, null);
-  anim.finished.then(t.step_func(function() {
-    assert_equals(anim.effect.getComputedTiming().progress, null);
-    t.done();
-  }));
+  div.style.lineHeight = '1234px';
+  var anim = div.animate({ lineHeight: [ 0, 1 ] }, { delay: 1 });
+  anim.currentTime = -1;
+  assert_equals(getComputedStyle(div).lineHeight, '1234px');
+  anim.currentTime = 1;
+  assert_equals(getComputedStyle(div).lineHeight, '1234px');
 }, 'Test progress during before and after phase when fill is none');
 
 </script>
