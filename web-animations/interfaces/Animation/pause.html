@@ -16,11 +16,11 @@ promise_test(function(t) {
   var animation = div.animate({}, 1000 * MS_PER_SEC);
   var previousCurrentTime = animation.currentTime;
 
-  return animation.ready.then(waitForAnimationFrames(1)).then(function() {
+  return waitForAnimationFrames(2).then(function() {
     assert_true(animation.currentTime >= previousCurrentTime,
                 'currentTime is initially increasing');
     animation.pause();
-    return animation.ready;
+    return waitForAnimationFrames(2);
   }).then(function() {
     previousCurrentTime = animation.currentTime;
     return waitForAnimationFrames(1);
@@ -43,7 +43,7 @@ promise_test(function(t) {
   assert_equals(animation.playState, 'pending', 'initially pause-pending');
 
   // Check it still resolves as expected
-  return animation.ready.then(function() {
+  return waitForAnimationFrames(2).then(function() {
     assert_equals(animation.playState, 'paused',
                   'resolves to paused state asynchronously');
     assert_equals(animation.currentTime, 0,
@@ -61,7 +61,7 @@ promise_test(function(t) {
   assert_equals(animation.currentTime, 1000 * MS_PER_SEC,
                 'currentTime is set to the effect end');
 
-  return animation.ready.then(function() {
+  return waitForAnimationFrames(1).then(function() {
     assert_equals(animation.currentTime, 1000 * MS_PER_SEC,
                   'keeps the initially set currentTime');
   });
@@ -84,12 +84,12 @@ test(function(t) {
 promise_test(function(t) {
   var div = createDiv(t);
   var animation = div.animate({}, 1000 * MS_PER_SEC);
-  return animation.ready
-    .then(function(animation) {
+  return waitForAnimationFrames(1)
+    .then(function() {
       animation.finish();
       animation.pause();
-      return animation.ready;
-    }).then(function(animation) {
+      return waitForAnimationFrames(1);
+    }).then(function() {
       assert_equals(animation.currentTime, 1000 * MS_PER_SEC,
                     'currentTime after pausing finished animation');
     });
