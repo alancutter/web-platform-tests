@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Animatable.animate effect tests</title>
+<link rel="help" href="https://w3c.github.io/web-animations/#dom-animatable-animate">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../../testcommon.js"></script>
+<script src="../../resources/keyframe-utils.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(function(t) {
+  var div = createDiv(t);
+  var anim = div.animate(null);
+  assert_class_string(anim.effect, 'KeyframeEffect',
+                      'Returned Animation has a KeyframeEffect');
+}, 'Element.animate() creates an Animation object with a KeyframeEffect');
+
+gPropertyIndexedKeyframesTests.forEach(function(subtest) {
+  test(function(t) {
+    var div = createDiv(t);
+    var anim = div.animate(subtest.input, 2000);
+    assert_frame_lists_equal(anim.effect.getKeyframes(), subtest.output);
+  }, 'Element.animate() accepts ' + subtest.desc);
+});
+
+gKeyframeSequenceTests.forEach(function(subtest) {
+  test(function(t) {
+    var div = createDiv(t);
+    var anim = div.animate(subtest.input, 2000);
+    assert_frame_lists_equal(anim.effect.getKeyframes(), subtest.output);
+  }, 'Element.animate() accepts ' + subtest.desc);
+});
+
+test(function(t) {
+  var div = createDiv(t);
+  var anim = div.animate({ opacity: [ 0, 1 ] }, 2000);
+  assert_equals(anim.effect.timing.duration, 2000);
+  // Also check that unspecified parameters receive their default values
+  assert_equals(anim.effect.timing.fill, 'auto');
+}, 'Element.animate() accepts a double as an options argument');
+
+test(function(t) {
+  var div = createDiv(t);
+  var anim = div.animate({ opacity: [ 0, 1 ] },
+                         { duration: Infinity, fill: 'forwards' });
+  assert_equals(anim.effect.timing.duration, Infinity);
+  assert_equals(anim.effect.timing.fill, 'forwards');
+  // Also check that unspecified parameters receive their default values
+  assert_equals(anim.effect.timing.direction, 'normal');
+}, 'Element.animate() accepts a KeyframeAnimationOptions argument');
+
+test(function(t) {
+  var div = createDiv(t);
+  var anim = div.animate({ opacity: [ 0, 1 ] });
+  assert_equals(anim.effect.timing.duration, 'auto');
+}, 'Element.animate() accepts an absent options argument');
+
+</script>
+</body>

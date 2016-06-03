@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Animatable.animate basic tests</title>
+<link rel="help" href="https://w3c.github.io/web-animations/#dom-animatable-animate">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../../testcommon.js"></script>
+<script src="../../resources/keyframe-utils.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+// Tests on Element
+
+test(function(t) {
+  var div = createDiv(t);
+  var anim = div.animate(null);
+  assert_class_string(anim, 'Animation', 'Returned object is an Animation');
+}, 'Element.animate() creates an Animation object');
+
+gInvalidKeyframesTests.forEach(function(subtest) {
+  test(function(t) {
+    var div = createDiv(t);
+    assert_throws(subtest.expected, function() {
+      div.animate(subtest.input, 2000);
+    });
+  }, 'Element.animate() does not accept ' + subtest.desc);
+});
+
+test(function(t) {
+  var div = createDiv(t);
+  var anim = div.animate({ opacity: [ 0, 1 ] }, 2000);
+  assert_equals(anim.id, '');
+}, 'Element.animate() correctly sets the id attribute when no id is specified');
+
+test(function(t) {
+  var div = createDiv(t);
+  var anim = div.animate({ opacity: [ 0, 1 ] }, { id: 'test' });
+  assert_equals(anim.id, 'test');
+}, 'Element.animate() correctly sets the id attribute');
+
+</script>
+</body>
