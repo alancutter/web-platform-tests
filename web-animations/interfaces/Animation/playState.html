@@ -16,7 +16,7 @@ promise_test(function(t) {
   var animation = div.animate({}, 100 * MS_PER_SEC);
 
   assert_equals(animation.playState, 'pending');
-  return animation.ready.then(function() {
+  return waitForAnimationFrames(2).then(function() {
     assert_equals(animation.playState, 'running');
   });
 }, 'Animation.playState reports \'pending\'->\'running\' when initially ' +
@@ -28,7 +28,7 @@ promise_test(function(t) {
   animation.pause();
 
   assert_equals(animation.playState, 'pending');
-  return animation.ready.then(function() {
+  return waitForAnimationFrames(2).then(function() {
     assert_equals(animation.playState, 'paused');
   });
 }, 'Animation.playState reports \'pending\'->\'paused\' when pausing');
