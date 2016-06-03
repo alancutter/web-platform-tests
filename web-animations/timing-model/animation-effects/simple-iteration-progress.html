@@ -20,14 +20,14 @@ function executeTests(tests, description) {
     test(function(t) {
       var div = createDiv(t);
       var anim = div.animate({ opacity: [ 0, 1 ] }, currentTest.input);
-      assert_equals(anim.effect.getComputedTiming().progress,
+      assert_equals(Number(getComputedStyle(div).opacity),
                     currentTest.before);
       anim.currentTime = currentTest.input.delay || 0;
-      assert_equals(anim.effect.getComputedTiming().progress,
+      assert_equals(Number(getComputedStyle(div).opacity),
                     currentTest.active);
       if (typeof currentTest.after !== 'undefined') {
         anim.finish();
-        assert_equals(anim.effect.getComputedTiming().progress,
+        assert_equals(Number(getComputedStyle(div).opacity),
                       currentTest.after);
       }
     }, description + testParams);
