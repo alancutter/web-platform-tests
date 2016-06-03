@@ -11,23 +11,22 @@
 <script>
 'use strict';
 
-promise_test(function(t) {
+test(function(t) {
   var div = createDiv(t);
   var animation = div.animate({ transform: ['none', 'translate(10px)']},
                               { duration : 100 * MS_PER_SEC,
                                 iterations : Infinity});
-  return animation.ready.then(function() {
-    // Seek to a time outside the active range so that play() will have to
-    // snap back to the start
-    animation.currentTime = -5 * MS_PER_SEC;
-    animation.playbackRate = -1;
 
-    assert_throws('InvalidStateError',
-                  function () { animation.play(); },
-                  'Expected InvalidStateError exception on calling play() ' +
-                  'with a negative playbackRate and infinite-duration ' +
-                  'animation');
-  });
+  // Seek to a time outside the active range so that play() will have to
+  // snap back to the start
+  animation.currentTime = -5 * MS_PER_SEC;
+  animation.playbackRate = -1;
+
+  assert_throws('InvalidStateError',
+                function () { animation.play(); },
+                'Expected InvalidStateError exception on calling play() ' +
+                'with a negative playbackRate and infinite-duration ' +
+                'animation');
 }, 'play() throws when seeking an infinite-duration animation played in ' +
    'reverse');
 
