@@ -13,10 +13,12 @@
 <script>
 "use strict";
 
-function assert_style_left_at(animation, time, easingFunction) {
+var duration = 1000;
+
+function assert_style_left_at(target, animation, time, easingFunction) {
   animation.currentTime = time;
-  var portion = time / animation.effect.timing.duration;
-  assert_approx_equals(pxToNum(getComputedStyle(animation.effect.target).left),
+  var portion = time / duration;
+  assert_approx_equals(pxToNum(getComputedStyle(target).left),
                        easingFunction(portion) * 100,
                        0.01,
                        'The left of the animation should be approximately ' +
@@ -28,18 +30,18 @@ gEffectEasingTests.forEach(function(options) {
     var target = createDiv(t);
     target.style.position = 'absolute';
     var anim = target.animate([ { left: '0px' }, { left: '100px' } ],
-                              { duration: 1000,
+                              { duration: duration,
                                 fill: 'forwards',
                                 easing: options.easing });
     var easing = options.easingFunction;
 
     anim.pause();
 
-    assert_style_left_at(anim, 0, easing);
-    assert_style_left_at(anim, 250, easing);
-    assert_style_left_at(anim, 500, easing);
-    assert_style_left_at(anim, 750, easing);
-    assert_style_left_at(anim, 1000, easing);
+    assert_style_left_at(target, anim, 0, easing);
+    assert_style_left_at(target, anim, 250, easing);
+    assert_style_left_at(target, anim, 500, easing);
+    assert_style_left_at(target, anim, 750, easing);
+    assert_style_left_at(target, anim, 1000, easing);
   }, options.desc);
 });
 
@@ -81,18 +83,18 @@ gEffectEasingTestsWithKeyframeEasing.forEach(function(options) {
     var anim = target.animate(
       [ { left: '0px', easing: options.keyframeEasing },
         { left: '100px' } ],
-        { duration: 1000,
+        { duration: duration,
           fill: 'forwards',
           easing: options.easing });
     var easing = options.easingFunction;
 
     anim.pause();
 
-    assert_style_left_at(anim, 0, easing);
-    assert_style_left_at(anim, 250, easing);
-    assert_style_left_at(anim, 500, easing);
-    assert_style_left_at(anim, 750, easing);
-    assert_style_left_at(anim, 1000, easing);
+    assert_style_left_at(target, anim, 0, easing);
+    assert_style_left_at(target, anim, 250, easing);
+    assert_style_left_at(target, anim, 500, easing);
+    assert_style_left_at(target, anim, 750, easing);
+    assert_style_left_at(target, anim, 1000, easing);
   }, options.desc);
 });
 
@@ -102,7 +104,7 @@ test(function(t) {
   target.style.position = 'absolute';
   var anim = target.animate([ { left: '0px', easing: 'step-start' },
                               { left: '100px' } ],
-                            { duration: 1000,
+                            { duration: duration,
                               fill: 'forwards',
                               easing: 'cubic-bezier(0, 1.5, 1, 1.5)' });
   anim.pause();
@@ -123,7 +125,7 @@ test(function(t) {
   target.style.position = 'absolute';
   var anim = target.animate([ { left: '0px', easing: 'step-end' },
                               { left: '100px' } ],
-                            { duration: 1000,
+                            { duration: duration,
                               fill: 'forwards',
                               easing: 'cubic-bezier(0, 1.5, 1, 1.5)' });
   anim.pause();
@@ -144,7 +146,7 @@ test(function(t) {
   target.style.position = 'absolute';
   var anim = target.animate([ { left: '0px', easing: 'step-start' },
                               { left: '100px' } ],
-                            { duration: 1000,
+                            { duration: duration,
                               fill: 'forwards',
                               easing: 'cubic-bezier(0, -0.5, 1, -0.5)' });
   anim.pause();
@@ -165,7 +167,7 @@ test(function(t) {
   target.style.position = 'absolute';
   var anim = target.animate([ { left: '0px', easing: 'step-end' },
                               { left: '100px' } ],
-                            { duration: 1000,
+                            { duration: duration,
                               fill: 'forwards',
                               easing: 'cubic-bezier(0, -0.5, 1, -0.5)' });
   anim.pause();
@@ -188,7 +190,7 @@ test(function(t) {
     // http://cubic-bezier.com/#.5,1,.5,0
     [ { left: '0px', easing: 'cubic-bezier(0.5, 1, 0.5, 0)' },
       { left: '100px' } ],
-      { duration: 1000,
+      { duration: duration,
         fill: 'forwards',
         easing: 'cubic-bezier(0, 1.5, 1, 1.5)' });
   var keyframeEasing = function(x) {
@@ -211,23 +213,23 @@ test(function(t) {
   anim.pause();
 
   // The effect-easing produces values greater than 1 in (0.23368794, 1)
-  assert_style_left_at(anim, 0, function(x) {
+  assert_style_left_at(target, anim, 0, function(x) {
     return keyframeEasing(effectEasing(x));
   });
-  assert_style_left_at(anim, 230, function(x) {
+  assert_style_left_at(target, anim, 230, function(x) {
     return keyframeEasing(effectEasing(x));
   });
-  assert_style_left_at(anim, 240, function(x) {
+  assert_style_left_at(target, anim, 240, function(x) {
     return keyframeEasingExtrapolated(effectEasing(x));
   });
   // Near the extreme point of the effect-easing function
-  assert_style_left_at(anim, 700, function(x) {
+  assert_style_left_at(target, anim, 700, function(x) {
     return keyframeEasingExtrapolated(effectEasing(x));
   });
-  assert_style_left_at(anim, 990, function(x) {
+  assert_style_left_at(target, anim, 990, function(x) {
     return keyframeEasingExtrapolated(effectEasing(x));
   });
-  assert_style_left_at(anim, 1000, function(x) {
+  assert_style_left_at(target, anim, 1000, function(x) {
     return keyframeEasing(effectEasing(x));
   });
 }, 'effect easing produces values greater than 1 with keyframe easing ' +
@@ -240,7 +242,7 @@ test(function(t) {
     // http://cubic-bezier.com/#0,1.5,1,1.5
     [ { left: '0px', easing: 'cubic-bezier(0, 1.5, 1, 1.5)' },
       { left: '100px' } ],
-      { duration: 1000,
+      { duration: duration,
         fill: 'forwards',
         easing: 'cubic-bezier(0, 1.5, 1, 1.5)' });
   var easing = function(x) {
@@ -261,23 +263,23 @@ test(function(t) {
   anim.pause();
 
   // The effect-easing produces values greater than 1 in (0.23368794, 1)
-  assert_style_left_at(anim, 0, function(x) {
+  assert_style_left_at(target, anim, 0, function(x) {
     return easing(easing(x))
   });
-  assert_style_left_at(anim, 230, function(x) {
+  assert_style_left_at(target, anim, 230, function(x) {
     return easing(easing(x))
   });
-  assert_style_left_at(anim, 240, function(x) {
+  assert_style_left_at(target, anim, 240, function(x) {
     return easingExtrapolated(easing(x));
   });
   // Near the extreme point of the effect-easing function
-  assert_style_left_at(anim, 700, function(x) {
+  assert_style_left_at(target, anim, 700, function(x) {
     return easingExtrapolated(easing(x));
   });
-  assert_style_left_at(anim, 990, function(x) {
+  assert_style_left_at(target, anim, 990, function(x) {
     return easingExtrapolated(easing(x));
   });
-  assert_style_left_at(anim, 1000, function(x) {
+  assert_style_left_at(target, anim, 1000, function(x) {
     return easing(easing(x))
   });
 }, 'effect easing which produces values greater than 1 and the tangent on ' +
@@ -291,7 +293,7 @@ test(function(t) {
     // http://cubic-bezier.com/#.5,1,.5,0
     [ { left: '0px', easing: 'cubic-bezier(0.5, 1, 0.5, 0)' },
       { left: '100px' } ],
-      { duration: 1000,
+      { duration: duration,
         fill: 'forwards',
         easing: 'cubic-bezier(0, -0.5, 1, -0.5)' });
   var keyframeEasing = function(x) {
@@ -314,23 +316,23 @@ test(function(t) {
   anim.pause();
 
   // The effect-easing produces negative values in (0, 0.766312060)
-  assert_style_left_at(anim, 0, function(x) {
+  assert_style_left_at(target, anim, 0, function(x) {
     return keyframeEasing(effectEasing(x));
   });
-  assert_style_left_at(anim, 10, function(x) {
+  assert_style_left_at(target, anim, 10, function(x) {
     return keyframeEasingExtrapolated(effectEasing(x));
   });
   // Near the extreme point of the effect-easing function
-  assert_style_left_at(anim, 300, function(x) {
+  assert_style_left_at(target, anim, 300, function(x) {
     return keyframeEasingExtrapolated(effectEasing(x));
   });
-  assert_style_left_at(anim, 750, function(x) {
+  assert_style_left_at(target, anim, 750, function(x) {
     return keyframeEasingExtrapolated(effectEasing(x));
   });
-  assert_style_left_at(anim, 770, function(x) {
+  assert_style_left_at(target, anim, 770, function(x) {
     return keyframeEasing(effectEasing(x));
   });
-  assert_style_left_at(anim, 1000, function(x) {
+  assert_style_left_at(target, anim, 1000, function(x) {
     return keyframeEasing(effectEasing(x));
   });
 }, 'effect easing produces negative values with keyframe easing ' +
@@ -343,7 +345,7 @@ test(function(t) {
     // http://cubic-bezier.com/#0,-0.5,1,-0.5
     [ { left: '0px', easing: 'cubic-bezier(0, -0.5, 1, -0.5)' },
       { left: '100px' } ],
-      { duration: 1000,
+      { duration: duration,
         fill: 'forwards',
         easing: 'cubic-bezier(0, -0.5, 1, -0.5)' });
   var easing = function(x) {
@@ -364,310 +366,28 @@ test(function(t) {
   anim.pause();
 
   // The effect-easing produces negative values in (0, 0.766312060)
-  assert_style_left_at(anim, 0, function(x) {
+  assert_style_left_at(target, anim, 0, function(x) {
     return easing(easing(x))
   });
-  assert_style_left_at(anim, 10, function(x) {
+  assert_style_left_at(target, anim, 10, function(x) {
     return easingExtrapolated(easing(x));
   });
   // Near the extreme point of the effect-easing function
-  assert_style_left_at(anim, 300, function(x) {
+  assert_style_left_at(target, anim, 300, function(x) {
     return easingExtrapolated(easing(x));
   });
-  assert_style_left_at(anim, 750, function(x) {
+  assert_style_left_at(target, anim, 750, function(x) {
     return easingExtrapolated(easing(x));
   });
-  assert_style_left_at(anim, 770, function(x) {
+  assert_style_left_at(target, anim, 770, function(x) {
     return easing(easing(x))
   });
-  assert_style_left_at(anim, 1000, function(x) {
+  assert_style_left_at(target, anim, 1000, function(x) {
     return easing(easing(x))
   });
 }, 'effect easing which produces negative values and the tangent on ' +
    'the lower boundary is infinity with keyframe easing producing ' +
    'negative values');
-
-var gStepTimingFunctionTests = [
-  {
-    description: 'Test bounds point of step-start easing',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  delay: 1000,
-                  duration: 1000,
-                  fill: 'both',
-                  easing: 'steps(2, start)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 0 },
-                  { currentTime: 999,  progress: 0 },
-                  { currentTime: 1000, progress: 0.5 },
-                  { currentTime: 1499, progress: 0.5 },
-                  { currentTime: 1500, progress: 1 },
-                  { currentTime: 2000, progress: 1 }
-                ]
-  },
-  {
-    description: 'Test bounds point of step-start easing with compositor',
-    keyframe:   [ { opacity: 0 },
-                  { opacity: 1 } ],
-    effect:     {
-                  delay: 1000,
-                  duration: 1000,
-                  fill: 'both',
-                  easing: 'steps(2, start)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 0 },
-                  { currentTime: 999,  progress: 0 },
-                  { currentTime: 1000, progress: 0.5 },
-                  { currentTime: 1499, progress: 0.5 },
-                  { currentTime: 1500, progress: 1 },
-                  { currentTime: 2000, progress: 1 }
-                ]
-  },
-  {
-    description: 'Test bounds point of step-start easing with reverse direction',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  delay: 1000,
-                  duration: 1000,
-                  fill: 'both',
-                  direction: 'reverse',
-                  easing: 'steps(2, start)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 1 },
-                  { currentTime: 1001, progress: 1 },
-                  { currentTime: 1500, progress: 1 },
-                  { currentTime: 1501, progress: 0.5 },
-                  { currentTime: 2000, progress: 0 },
-                  { currentTime: 2500, progress: 0 }
-                ]
-  },
-  {
-    description: 'Test bounds point of step-start easing ' +
-                 'with iterationStart not at a transition point',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  delay: 1000,
-                  duration: 1000,
-                  fill: 'both',
-                  iterationStart: 0.25,
-                  easing: 'steps(2, start)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 0.5 },
-                  { currentTime: 999,  progress: 0.5 },
-                  { currentTime: 1000, progress: 0.5 },
-                  { currentTime: 1249, progress: 0.5 },
-                  { currentTime: 1250, progress: 1 },
-                  { currentTime: 1749, progress: 1 },
-                  { currentTime: 1750, progress: 0.5 },
-                  { currentTime: 2000, progress: 0.5 },
-                  { currentTime: 2500, progress: 0.5 },
-                ]
-  },
-  {
-    description: 'Test bounds point of step-start easing ' +
-                 'with iterationStart and delay',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  delay: 1000,
-                  duration: 1000,
-                  fill: 'both',
-                  iterationStart: 0.5,
-                  easing: 'steps(2, start)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 0.5 },
-                  { currentTime: 999,  progress: 0.5 },
-                  { currentTime: 1000, progress: 1 },
-                  { currentTime: 1499, progress: 1 },
-                  { currentTime: 1500, progress: 0.5 },
-                  { currentTime: 2000, progress: 1 }
-                ]
-  },
-  {
-    description: 'Test bounds point of step-start easing ' +
-                 'with iterationStart and reverse direction',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  delay: 1000,
-                  duration: 1000,
-                  fill: 'both',
-                  iterationStart: 0.5,
-                  direction: 'reverse',
-                  easing: 'steps(2, start)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 1 },
-                  { currentTime: 1000, progress: 1 },
-                  { currentTime: 1001, progress: 0.5 },
-                  { currentTime: 1499, progress: 0.5 },
-                  { currentTime: 1500, progress: 1 },
-                  { currentTime: 1999, progress: 1 },
-                  { currentTime: 2000, progress: 0.5 },
-                  { currentTime: 2500, progress: 0.5 }
-                ]
-  },
-  {
-    description: 'Test bounds point of step(4, start) easing ' +
-                 'with iterationStart 0.75 and delay',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  duration: 1000,
-                  fill: 'both',
-                  delay: 1000,
-                  iterationStart: 0.75,
-                  easing: 'steps(4, start)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 0.75 },
-                  { currentTime: 999,  progress: 0.75 },
-                  { currentTime: 1000, progress: 1 },
-                  { currentTime: 2000, progress: 1 },
-                  { currentTime: 2500, progress: 1 }
-                ]
-  },
-  {
-    description: 'Test bounds point of step-start easing ' +
-                 'with alternate direction',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  duration: 1000,
-                  fill: 'both',
-                  delay: 1000,
-                  iterations: 2,
-                  iterationStart: 1.5,
-                  direction: 'alternate',
-                  easing: 'steps(2, start)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 1 },
-                  { currentTime: 1000, progress: 1 },
-                  { currentTime: 1001, progress: 0.5 },
-                  { currentTime: 2999, progress: 1 },
-                  { currentTime: 3000, progress: 0.5 },
-                  { currentTime: 3500, progress: 0.5 }
-                ]
-  },
-  {
-    description: 'Test bounds point of step-start easing ' +
-                 'with alternate-reverse direction',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  duration: 1000,
-                  fill: 'both',
-                  delay: 1000,
-                  iterations: 2,
-                  iterationStart: 0.5,
-                  direction: 'alternate-reverse',
-                  easing: 'steps(2, start)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 1 },
-                  { currentTime: 1000, progress: 1 },
-                  { currentTime: 1001, progress: 0.5 },
-                  { currentTime: 2999, progress: 1 },
-                  { currentTime: 3000, progress: 0.5 },
-                  { currentTime: 3500, progress: 0.5 }
-                ]
-  },
-  {
-    description: 'Test bounds point of step-start easing in keyframe',
-    keyframe:   [ { width: '0px', easing: 'steps(2, start)' },
-                  { width: '100px' } ],
-    effect:     {
-                  delay: 1000,
-                  duration: 1000,
-                  fill: 'both',
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 0,     width: '0px' },
-                  { currentTime: 999,  progress: 0,     width: '0px' },
-                  { currentTime: 1000, progress: 0,     width: '50px' },
-                  { currentTime: 1499, progress: 0.499, width: '50px' },
-                  { currentTime: 1500, progress: 0.5,   width: '100px' },
-                  { currentTime: 2000, progress: 1,     width: '100px' },
-                  { currentTime: 2500, progress: 1,     width: '100px' }
-                ]
-  },
-  {
-    description: 'Test bounds point of step-end easing ' +
-                 'with iterationStart and delay',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  duration: 1000,
-                  fill: 'both',
-                  delay: 1000,
-                  iterationStart: 0.5,
-                  easing: 'steps(2, end)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 0 },
-                  { currentTime: 999,  progress: 0 },
-                  { currentTime: 1000, progress: 0.5 },
-                  { currentTime: 1499, progress: 0.5 },
-                  { currentTime: 1500, progress: 0 },
-                  { currentTime: 1999, progress: 0 },
-                  { currentTime: 2000, progress: 0.5 },
-                  { currentTime: 2500, progress: 0.5 }
-                ]
-  },
-  {
-    description: 'Test bounds point of step-end easing ' +
-                 'with iterationStart not at a transition point',
-    keyframe:   [ { width: '0px' },
-                  { width: '100px' } ],
-    effect:     {
-                  delay: 1000,
-                  duration: 1000,
-                  fill: 'both',
-                  iterationStart: 0.75,
-                  easing: 'steps(2, end)'
-                },
-    conditions: [
-                  { currentTime: 0,    progress: 0.5 },
-                  { currentTime: 999,  progress: 0.5 },
-                  { currentTime: 1000, progress: 0.5 },
-                  { currentTime: 1249, progress: 0.5 },
-                  { currentTime: 1250, progress: 0 },
-                  { currentTime: 1749, progress: 0 },
-                  { currentTime: 1750, progress: 0.5 },
-                  { currentTime: 2000, progress: 0.5 },
-                  { currentTime: 2500, progress: 0.5 },
-                ]
-  }
-];
-
-gStepTimingFunctionTests.forEach(function(options) {
-  test(function(t) {
-    var target = createDiv(t);
-    var animation = target.animate(options.keyframe, options.effect);
-    options.conditions.forEach(function(condition) {
-      animation.currentTime = condition.currentTime;
-      if (typeof condition.progress !== 'undefined') {
-        assert_equals(animation.effect.getComputedTiming().progress,
-                      condition.progress,
-                      'Progress at ' + animation.currentTime + 'ms');
-      }
-      if (typeof condition.width !== 'undefined') {
-        assert_equals(getComputedStyle(target).width,
-                      condition.width,
-                      'Progress at ' + animation.currentTime + 'ms');
-      }
-    });
-  }, options.description);
-});
 
 </script>
 </body>
